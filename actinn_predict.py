@@ -21,6 +21,7 @@ def get_parser(parser=None):
     parser.add_argument("-ms", "--minibatch_size", type=int, help="Minibatch size (default: 128)", default=128)
     parser.add_argument("-pc", "--print_cost", type=bool, help="Print cost when training (default: True)", default=True)
     parser.add_argument("-op", "--output_probability", type=bool, help="Output the probabilities for each cell being the cell types in the training data (default: False)", default=False)
+    parser.add_argument("-o",  "--output", type=str, help="Prefix of the output files.", default = "./")
     return parser
 
 
@@ -328,11 +329,11 @@ if __name__ == '__main__':
         test_predict = pd.DataFrame(predict_probability(test_set, parameters))
         test_predict.index = [label_to_type_dict[x] for x in range(test_predict.shape[0])]
         test_predict.columns = barcode
-        test_predict.to_csv("predicted_probabilities.txt", sep="\t")
+        test_predict.to_csv(args.output+"predicted_probabilities.txt", sep="\t")
     test_predict = predict(test_set, parameters)
     predicted_label = []
     for i in range(len(test_predict)):
         predicted_label.append(label_to_type_dict[test_predict[i]])
     predicted_label = pd.DataFrame({"cellname":barcode, "celltype":predicted_label})
-    predicted_label.to_csv("predicted_label.txt", sep="\t", index=False)
+    predicted_label.to_csv(args.output+"predicted_label.txt", sep="\t", index=False)
 print("Run time:", timeit.default_timer() - run_time)
